@@ -1,0 +1,29 @@
+{
+    "name": "stevecordle/gravity-forms-bulk-download",
+    "description": "Bulk download files for file upload forms using Gravity Forms",
+    "keywords": [
+        "wordpress",
+        "plugin",
+        "gravity-forms"
+    ],
+    "authors": [
+        {
+            "name": "Steve Cordle",
+            "email": "steve@devinate.com",
+            "homepage": "http://stevecordle.net"
+        }
+    ],
+    "homepage": "http://rstevecordle.net",
+    "license": "MIT",
+    "type": "wordpress-plugin",
+    "require": {
+        "php": ">=5.3.2",
+        "composer/installers": "*",
+        "alchemy/zippy": "0.2.*@dev"
+    },
+    "autoload": {
+        "psr-4": {
+            "Bulk\\": "src"
+        }
+    }
+}
