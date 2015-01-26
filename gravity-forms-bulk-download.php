@@ -1,9 +1,114 @@
 <?php
+
 /**
-* Plugin Name: Gravity Forms Bulk Download
-* Plugin URI: http://stevecordl.net
-* Description: Bulk download files for file upload forms using Gravity Forms
-* Version: 0.9
-* Author: Steve Cordle
-* Author URI: http://stevecordle.net/
-**/
+ * Plugin Name: Gravity Forms Bulk Download
+ * Plugin URI: http://stevecordl.net
+ * Description: Bulk download files for file upload forms using Gravity Forms
+ * Version: 01.0
+ * Author: Steve Cordle
+ * Author URI: http://stevecordle.net/
+ * */
+require_once __DIR__ . '/vendor/autoload.php';
+
+use Alchemy\Zippy\Zippy;
+
+if (class_exists("GFForms") && !class_exists("GFBulkDownload")) {
+    GFForms::include_feed_addon_framework();
+
+    class GFBulkDownload {
+
+        protected $name = 'GFBulkDownload';
+        protected $version = '1.0';
+
+        public function __construct() {
+            add_action("gform_after_submission", array($this, 'afterSubmission'), 10, 2);
+            add_action("gform_pre_submission_filter", array($this, 'preSubmissionFilter'), 10, 1);
+            add_action("gform_entries_column_filter", array($this, 'change_column_data'), 10, 5);
+            add_filter('gform_custom_merge_tags', array($this, 'custom_merge_tags'), 10, 4);
+            add_filter('gform_replace_merge_tags', array($this, 'replace_download_link'), 10, 7);
+        }
+
+        public function preSubmissionFilter($form) {
+
+            //Get upload path for form
+            $form_upload_dir = GFFormsModel::get_upload_path($form['id']);
+
+            //strip everything up to wp-content/....   so we can build a url
+            $form_upload_dir_formatted = stristr($form_upload_dir, 'wp-content/');
+
+            //decode json and remove slashes to get list of files
+            $files_for_zip = json_decode(stripslashes($_POST['gform_uploaded_files']), true);
+
+            //rest the array pointer
+            reset($files_for_zip);
+
+            // get the key of the first element (This is due to the format of the array  )          
+            $key = key($files_for_zip);
+            $zipArray = $files_for_zip[$key];
+
+            //Load Zippy library
+            $zip = Zippy::load();
+
+            //Loop thru files to format the array correctly
+            foreach ($zipArray as $file_info) {
+                $files[$file_info['uploaded_filename']] = $form_upload_dir . '/tmp/' . $file_info['temp_filename'];
+            }
+            //setup zip filename with random md5
+            $zip_name = 'files_' . md5(rand(0123456, 7890123)) . '.zip';
+            //Create and save the zip file
+            $zip->create(trailingslashit($form_upload_dir) . $zip_name, $files, true);
+            //Set the zip key for the $form object to our zip url so we can pass it to the entry
+            $form['zip'] = trailingslashit($form_upload_dir_formatted) . $zip_name;
+            return $form;
+        }
+
+        public function afterSubmission($entry, $form) {
+            //update the Entry with a zip_file meta field with a link to the zip file that was created.
+            if (isset($form['zip'])) {
+                gform_update_meta($entry['id'], 'zip_file', $form['zip']);
+            }
+        }
+
+        function change_column_data($value, $form_id, $field_id, $lead, $query_string) {
+            $form = GFFormsModel::get_form_meta($form_id);
+            $zip_path = gform_get_meta($lead['id'], 'zip_file');
+            $site_url = get_bloginfo('url');
+            $full_url = trailingslashit($site_url) . $zip_path;
+
+            foreach ($form['fields'] as $field) {
+                if ($field['type'] == 'fileupload' && $field['multipleFiles'] == "1") {
+                    $upload_field_id = $field['id'];
+                }
+            }
+            if ($upload_field_id == $field_id) {
+                if (!empty($zip_path)) {
+                    return $value . " <a style='margin-left:20px;' href='$full_url'> Download All <i class='fa fa-download'> </i></a>";
+                }
+            }
+
+            return $value;
+        }
+
+        function custom_merge_tags($merge_tags, $form_id, $fields, $element_id) {
+
+            $merge_tags[] = array('label' => 'Download All Files (Zip)', 'tag' => '{download_all_files_zip}');
+            return $merge_tags;
+        }
+
+        function replace_download_link($text, $form, $entry, $url_encode, $esc_html, $nl2br, $format) {
+            $custom_merge_tag = '{download_all_files_zip}';
+
+            if(strpos($text, $custom_merge_tag) === false){
+                return $text;
+            }else{
+                $zip_path = gform_get_meta($entry['id'], 'zip_file');
+                $full_url = trailingslashit(get_bloginfo('url')).$zip_path;
+                $text = str_replace($custom_merge_tag, $full_url, $text);
+                return $text;
+            }
+        }
+
+}
+
+new GFBulkDownload();
+}
