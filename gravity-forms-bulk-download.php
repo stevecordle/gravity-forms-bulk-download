@@ -1,11 +1,11 @@
 <?php defined('ABSPATH') or die("No direct access allowed.");
 /**
  * Plugin Name: Gravity Forms Bulk Download
- * Plugin URI: http://stevecordle.net
+ * Plugin URI: http://stevecordle.net (coming soon)
  * Description: Bulk download files for file upload forms using Gravity Forms
- * Version: 01.0
+ * Version: 1.0
  * Author: Steve Cordle
- * Author URI: http://stevecordle.net/
+ * Author URI: http://stevecordle.net/ (coming soon)
  * */
 
 require_once __DIR__ . '/vendor/autoload.php';
@@ -67,27 +67,28 @@ if (class_exists("GFForms") && !class_exists("GFBulkDownload")) {
             //decode json and remove slashes to get list of files
             $files_for_zip = json_decode(stripslashes($_POST['gform_uploaded_files']), true);
 
-            //reset the array pointer
-            reset($files_for_zip);
+            if(!is_null($files_for_zip)){
+                //reset the array pointer
+                reset($files_for_zip);
 
-            // get the key of the first element (This is due to the format of the array  )          
-            $key = key($files_for_zip);
-            $zipArray = $files_for_zip[$key];
+                // get the key of the first element (This is due to the format of the array  )          
+                $key = key($files_for_zip);
+                $zipArray = $files_for_zip[$key];
 
-            //Load Zippy library
-            $zip = Zippy::load();
+                //Load Zippy library
+                $zip = Zippy::load();
 
-            //Loop thru files to format the array correctly
-            foreach ($zipArray as $file_info) {
-                $files[$file_info['uploaded_filename']] = $form_upload_dir . '/tmp/' . $file_info['temp_filename'];
+                //Loop thru files to format the array correctly
+                foreach ($zipArray as $file_info) {
+                    $files[$file_info['uploaded_filename']] = $form_upload_dir . '/tmp/' . $file_info['temp_filename'];
+                }
+                //setup zip filename with random md5
+                $zip_name = 'files_' . md5(rand(0123456, 7890123)) . '.zip';
+                //Create and save the zip file
+                $zip->create(trailingslashit($form_upload_dir) . $zip_name, $files, true);
+                //Set the zip key for the $form object to the url for the zip file we created, minus the domainname so we can pass it to the entry
+                $form['zip'] = trailingslashit($form_upload_dir_formatted) . $zip_name;
             }
-            //setup zip filename with random md5
-            $zip_name = 'files_' . md5(rand(0123456, 7890123)) . '.zip';
-            //Create and save the zip file
-            $zip->create(trailingslashit($form_upload_dir) . $zip_name, $files, true);
-            //Set the zip key for the $form object to the url for the zip file we created, minus the domainname so we can pass it to the entry
-            $form['zip'] = trailingslashit($form_upload_dir_formatted) . $zip_name;
-            
             return $form;
         }
 
