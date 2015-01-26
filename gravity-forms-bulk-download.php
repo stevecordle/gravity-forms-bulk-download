@@ -11,8 +11,6 @@
 
 require_once __DIR__ . '/vendor/autoload.php';
 
-//use Alchemy\Zippy\Zippy;
-
 if (class_exists("GFForms") && !class_exists("GFBulkDownload")) {
 
     class GFBulkDownload {
@@ -28,6 +26,14 @@ if (class_exists("GFForms") && !class_exists("GFBulkDownload")) {
             add_filter('gform_custom_merge_tags',       array($this, 'custom_merge_tags'), 10, 4);
             add_filter('gform_replace_merge_tags',      array($this, 'replace_download_link'), 10, 7);
             add_action("gform_entry_detail",            array($this, 'addMetaToDetails'), 10, 2);
+            add_filter('gform_notification',            array($this, 'before_email'), 10, 3);
+        }
+
+        function before_email( $notification, $form, $entry ) {
+            $site = traillingslashit(get_bloginfo('url'));
+            $url = $site.$entry['zip_path'];
+            $notification['message'] .= "\n\n <a href='{$url}' >Download All Files in Zip</a>";
+            return $notification;
         }
         
         public function addStyles(){
