@@ -31,8 +31,10 @@ if (class_exists("GFForms") && !class_exists("GFBulkDownload")) {
 
         function before_email( $notification, $form, $entry ) {
             $site = traillingslashit(get_bloginfo('url'));
-            $url = $site.$entry['zip_path'];
-            $notification['message'] .= "\n\n <a href='{$url}' >Download All Files in Zip</a>";
+            if($entry['zip_path']){
+                $url = $site.$entry['zip_path'];
+                $notification['message'] .= "\n\n <a href='{$url}' >Download All Files in Zip</a>";
+            }
             return $notification;
         }
         
