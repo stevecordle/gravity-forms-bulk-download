@@ -1,13 +1,13 @@
-<?php
-
+<?php defined('ABSPATH') or die("No direct access allowed.");
 /**
  * Plugin Name: Gravity Forms Bulk Download
- * Plugin URI: http://stevecordl.net
+ * Plugin URI: http://stevecordle.net
  * Description: Bulk download files for file upload forms using Gravity Forms
  * Version: 01.0
  * Author: Steve Cordle
  * Author URI: http://stevecordle.net/
  * */
+
 require_once __DIR__ . '/vendor/autoload.php';
 
 use Alchemy\Zippy\Zippy;
@@ -16,16 +16,17 @@ if (class_exists("GFForms") && !class_exists("GFBulkDownload")) {
 
     class GFBulkDownload {
 
-        protected $name = 'GFBulkDownload';
+        protected $name = 'Gravity Forms Bulk Download';
         protected $version = '1.0';
 
         public function __construct() {
-            add_action("admin_enqueue_scripts", array($this, 'addStyles'));
-            add_action("gform_entry_created", array($this, 'afterSubmission'), 1, 2);
-            add_action("gform_pre_submission_filter", array($this, 'preSubmissionFilter'), 10, 1);
-            add_action("gform_entries_column_filter", array($this, 'change_column_data'), 10, 5);
-            add_filter('gform_custom_merge_tags', array($this, 'custom_merge_tags'), 10, 4);
-            add_filter('gform_replace_merge_tags', array($this, 'replace_download_link'), 10, 7);
+            add_action("admin_enqueue_scripts",         array($this, 'addStyles'));
+            add_action("gform_entry_created",           array($this, 'afterSubmission'), 1, 2);
+            add_action("gform_pre_submission_filter",   array($this, 'preSubmissionFilter'), 10, 1);
+            add_action("gform_entries_column_filter",   array($this, 'change_column_data'), 10, 5);
+            add_filter('gform_custom_merge_tags',       array($this, 'custom_merge_tags'), 10, 4);
+            add_filter('gform_replace_merge_tags',      array($this, 'replace_download_link'), 10, 7);
+            add_action("gform_entry_detail",            array($this, 'addMetaToDetails'), 10, 2);
         }
         
         public function addStyles(){
@@ -35,6 +36,22 @@ if (class_exists("GFForms") && !class_exists("GFBulkDownload")) {
         
         public function addScripts(){
            
+        }
+        
+        function addMetaToDetails($form, $entry){
+            $zip = gform_get_meta($entry['id'], 'zip_path');
+            $site_url = trailingslashit(get_bloginfo('url'));
+            $url = $site_url.$zip;
+            echo    "<table cellspacing='0' class='widefat fixed entry-detail-view'>
+                        <tr>
+                            <td colspan='2' class='entry-view-field-name' >Zip File Download Link</td>
+                        </tr>
+                        <tr>
+                            <td colspan='2' class='entry-view-field-value lastrow'>
+                                <a class='gfbd-btn' style='margin-left:0;' href='{$url}'> Download All Files Zip <i class='fa fa-download'> </i></a>
+                            </td>
+                        </tr>
+                    </table>";
         }
 
         public function preSubmissionFilter($form) {
@@ -75,13 +92,13 @@ if (class_exists("GFForms") && !class_exists("GFBulkDownload")) {
         public function afterSubmission($entry, $form) {
             //update the Entry with a zip_file meta field with a link to the zip file that was created.
             if (isset($form['zip'])) {
-                gform_update_meta($entry['id'], 'zip_file', $form['zip']);
+                gform_update_meta($entry['id'], 'zip_path', $form['zip']);
             }
         }
 
         function change_column_data($value, $form_id, $field_id, $lead, $query_string) {
             $form = GFFormsModel::get_form_meta($form_id);
-            $zip_path = gform_get_meta($lead['id'], 'zip_file');
+            $zip_path = gform_get_meta($lead['id'], 'zip_path');
             $site_url = get_bloginfo('url');
             $full_url = trailingslashit($site_url) . $zip_path;
             foreach ($form['fields'] as $field) {
@@ -107,7 +124,7 @@ if (class_exists("GFForms") && !class_exists("GFBulkDownload")) {
             if (strpos($text, $custom_merge_tag) === false) {
                 return $text;
             } else {
-                $zip_path = gform_get_meta($entry['id'], 'zip_file');
+                $zip_path = gform_get_meta($entry['id'], 'zip_path');
                 $full_url = trailingslashit(get_bloginfo('url')) . $zip_path;
                 return str_replace($custom_merge_tag, $full_url, $text);
             }
