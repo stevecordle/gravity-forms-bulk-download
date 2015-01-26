@@ -27,7 +27,7 @@ Ex:
 
 == Installation ==
 
-Upload/Activate the plugin.  It automatically creates zip files when there are multiple file uploads on a gravity form that has the file upload (with multiple files activated).
+Upload/Activate the plugin.  It automatically creates zip files created with random md5 has for the name, to help with duplicate file names, when there are multiple file uploads on a gravity form that has the file upload (with multiple files activated).
 
 It creates a new merge tag {download_all_files_zip}, which is just the link of the zip file.
 
@@ -43,11 +43,9 @@ No settings necessary, it will create a zip file automatically when multiple fil
 
 == Screenshots ==
 
-1. This screen shot description corresponds to screenshot-1.(png|jpg|jpeg|gif). Note that the screenshot is taken from
-the /assets directory or the directory that contains the stable readme.txt (tags or trunk). Screenshots in the /assets 
-directory take precedence. For example, `/assets/screenshot-1.png` would win over `/tags/4.3/screenshot-1.png` 
-(or jpg, jpeg, gif).
-2. This is the second screen shot
+1. This shows the entry list with the Download All button added to the right of (# files).
+2. This shows the entry detail page where a Download All Files Zip button has been added at the bottom.
+3. This shows the Notifications page where a new merge tag was added that can be used to display the link of the zip file {download_all_files_zip}
 
 == Changelog ==
 
