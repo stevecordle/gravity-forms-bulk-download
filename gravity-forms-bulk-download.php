@@ -39,19 +39,21 @@ if (class_exists("GFForms") && !class_exists("GFBulkDownload")) {
         }
         
         function addMetaToDetails($form, $entry){
-            $zip = gform_get_meta($entry['id'], 'zip_path');
-            $site_url = trailingslashit(get_bloginfo('url'));
-            $url = $site_url.$zip;
-            echo    "<table cellspacing='0' class='widefat fixed entry-detail-view'>
-                        <tr>
-                            <td colspan='2' class='entry-view-field-name' >Zip File Download Link</td>
-                        </tr>
-                        <tr>
-                            <td colspan='2' class='entry-view-field-value lastrow'>
-                                <a class='gfbd-btn' style='margin-left:0;' href='{$url}'> Download All Files Zip <i class='fa fa-download'> </i></a>
-                            </td>
-                        </tr>
-                    </table>";
+            if(isset($entry['zip_path'])){
+                $zip = gform_get_meta($entry['id'], 'zip_path');
+                $site_url = trailingslashit(get_bloginfo('url'));
+                $url = $site_url.$zip;
+                echo    "<table cellspacing='0' class='widefat fixed entry-detail-view'>
+                            <tr>
+                                <td colspan='2' class='entry-view-field-name' >Zip File Download Link</td>
+                            </tr>
+                            <tr>
+                                <td colspan='2' class='entry-view-field-value lastrow'>
+                                    <a class='gfbd-btn' style='margin-left:0;' href='{$url}'> Download All Files Zip <i class='fa fa-download'> </i></a>
+                                </td>
+                            </tr>
+                        </table>";
+            }
         }
 
         public function preSubmissionFilter($form) {
