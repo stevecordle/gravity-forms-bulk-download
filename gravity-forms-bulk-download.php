@@ -112,8 +112,7 @@ if (!class_exists("GFBulkDownload")) {
 
 		public function delete_entry_file_zip( $entry_id ) {
 			//getting entry object
-			$entry = GFAPI::get_entry( $entry_id );
-			$zip = gform_get_meta($entry['id'], 'zip_path');
+			$zip = gform_get_meta($entry_id, 'zip_path');
 			//if entry is associated with a file zip, delete it so zip files aren't left on the server after the entry was deleted
 			if(!empty($zip)){
 				wp_delete_file($zip);
