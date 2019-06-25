@@ -1,9 +1,9 @@
 === Gravity Forms Bulk File Downloader ===
-Contributors: stevecordle
+Contributors: stevecordle, kzeni
 Tags: gravity forms, bulk download
 Requires at least: 3.8
-Tested up to: 4.1
-Stable tag: 1.0
+Tested up to: 5.2.2
+Stable tag: 1.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -48,6 +48,12 @@ No settings necessary, it will create a zip file automatically when multiple fil
 3. This shows the Notifications page where a new merge tag was added that can be used to display the link of the zip file {download_all_files_zip}
 
 == Changelog ==
+
+= 1.1 =
+* Updated to work with current Gravity Forms versions.
+* Made sure all intended functionality is working properly (submission email notification link, merge tags, output in entry listings & single entry details, bundling of uploaded files, etc.)
+* Made it so zip files are deleted when the corresponding entry is deleted.
+* Improved buttons to use standard class styling.
 
 = 1.0 =
 * Initial plugin creation.
