@@ -30,23 +30,23 @@ if (class_exists("GFForms") && !class_exists("GFBulkDownload")) {
         }
 
         function before_email( $notification, $form, $entry ) {
-            $site = traillingslashit(get_bloginfo('url'));
+            $site = trailingslashit(get_bloginfo('url'));
             if($entry['zip_path']){
                 $url = $site.$entry['zip_path'];
                 $notification['message'] .= "\n\n <a href='{$url}' >Download All Files in Zip</a>";
             }
             return $notification;
         }
-        
+
         public function addStyles(){
             wp_register_style('gform_bulk_download_css', plugin_dir_url(__FILE__).'assets/css/style.css');
             wp_enqueue_style('gform_bulk_download_css');
         }
-        
+
         public function addScripts(){
-           
+
         }
-        
+
         function addMetaToDetails($form, $entry){
             $zip = gform_get_meta($entry['id'], 'zip_path');
 
@@ -81,10 +81,10 @@ if (class_exists("GFForms") && !class_exists("GFBulkDownload")) {
                 //reset the array pointer
                 reset($files_for_zip);
 
-                // get the key of the first element (This is due to the format of the array  )          
+                // get the key of the first element (This is due to the format of the array  )
                 $key = key($files_for_zip);
                 $zipArray = $files_for_zip[$key];
-               
+
                 $zip = new ZipArchive();
                 $filename = 'files_' . md5(rand(0123456, 7890123)) . '.zip';
                 $file_path = trailingslashit($form_upload_dir) . $filename;
@@ -93,7 +93,7 @@ if (class_exists("GFForms") && !class_exists("GFBulkDownload")) {
                     $zip->addFile($form_upload_dir . '/tmp/' . $file_info['temp_filename'], $file_info['uploaded_filename']);
                 }
                 $zip->close();
-                
+
                 //Set the zip key for the $form object to the url for the zip file we created, minus the domainname so we can pass it to the entry
                 $form['zip'] = trailingslashit($form_upload_dir_formatted) . $filename;
             }
@@ -140,7 +140,7 @@ if (class_exists("GFForms") && !class_exists("GFBulkDownload")) {
                 return str_replace($custom_merge_tag, $full_url, $text);
             }
         }
-        
+
     }
 
     new GFBulkDownload();
