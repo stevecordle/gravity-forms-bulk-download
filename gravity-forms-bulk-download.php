@@ -3,7 +3,7 @@
  * Plugin Name: Gravity Forms Bulk Download
  * Plugin URI: http://stevecordle.net
  * Description: Bulk download files for file upload forms using Gravity Forms
- * Version: 1.1.1
+ * Version: 1.1.2
  * Author: Steve Cordle
  * Network: true
  * Author URI: http://stevecordle.net/
@@ -18,7 +18,7 @@ if (!class_exists('GFBulkDownload')) {
 	class GFBulkDownload
 	{
 		protected $name = 'Gravity Forms Bulk Download';
-		protected $version = '1.1.1';
+		protected $version = '1.1.2';
 
 		public static function init()
 		{
