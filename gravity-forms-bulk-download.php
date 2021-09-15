@@ -3,7 +3,7 @@
  * Plugin Name: Gravity Forms Bulk Download
  * Plugin URI: http://stevecordle.net
  * Description: Bulk download files for file upload forms using Gravity Forms
- * Version: 1.1.1
+ * Version: 1.1.2
  * Author: Steve Cordle
  * Network: true
  * Author URI: http://stevecordle.net/
@@ -18,7 +18,7 @@ if (!class_exists('GFBulkDownload')) {
 	class GFBulkDownload
 	{
 		protected $name = 'Gravity Forms Bulk Download';
-		protected $version = '1.1.1';
+		protected $version = '1.1.2';
 
 		public static function init()
 		{
@@ -32,7 +32,7 @@ if (!class_exists('GFBulkDownload')) {
 			add_action('gform_delete_entry', ['GFBulkDownload', 'delete_entry_file_zip'], 10, 1);
 		}
 
-		function append_before_email_sent($notification, $form, $entry)
+		public static function append_before_email_sent($notification, $form, $entry)
 		{
 			$site = trailingslashit(get_bloginfo('url'));
 			$zip_path = gform_get_meta($entry['id'], 'zip_path');
@@ -43,15 +43,15 @@ if (!class_exists('GFBulkDownload')) {
 			return $notification;
 		}
 
-		public function addStyles()
+		public static function addStyles()
 		{
 		}
 
-		public function addScripts()
+		public static function addScripts()
 		{
 		}
 
-		function addMetaToDetails($form, $entry)
+		public static function addMetaToDetails($form, $entry)
 		{
 			$zip = gform_get_meta($entry['id'], 'zip_path');
 
@@ -71,7 +71,7 @@ if (!class_exists('GFBulkDownload')) {
 			}
 		}
 
-		public function preSubmissionFilter($form)
+		public static function preSubmissionFilter($form)
 		{
 			//Get upload path for form
 			$form_upload_dir = GFFormsModel::get_upload_path($form['id']);
@@ -105,7 +105,7 @@ if (!class_exists('GFBulkDownload')) {
 			return $form;
 		}
 
-		public function afterSubmission($entry, $form)
+		public static function afterSubmission($entry, $form)
 		{
 			//update the Entry with a zip_file meta field with a link to the zip file that was created.
 			if (isset($form['zip'])) {
@@ -113,7 +113,7 @@ if (!class_exists('GFBulkDownload')) {
 			}
 		}
 
-		public function delete_entry_file_zip($entry_id)
+		public static function delete_entry_file_zip($entry_id)
 		{
 			//getting entry object
 			$zip = gform_get_meta($entry_id, 'zip_path');
@@ -123,7 +123,7 @@ if (!class_exists('GFBulkDownload')) {
 			}
 		}
 
-		function change_column_data($value, $form_id, $field_id, $lead, $query_string)
+		public static function change_column_data($value, $form_id, $field_id, $lead, $query_string)
 		{
 			$form = GFFormsModel::get_form_meta($form_id);
 			$zip_path = gform_get_meta($lead['id'], 'zip_path');
@@ -142,13 +142,13 @@ if (!class_exists('GFBulkDownload')) {
 			return $value;
 		}
 
-		function custom_merge_tags($merge_tags, $form_id, $fields, $element_id)
+		public static function custom_merge_tags($merge_tags, $form_id, $fields, $element_id)
 		{
 			$merge_tags[] = ['label' => 'Download All Files (Zip)', 'tag' => '{download_all_files_zip}'];
 			return $merge_tags;
 		}
 
-		function replace_download_link($text, $form, $entry, $url_encode, $esc_html, $nl2br, $format)
+		public static function replace_download_link($text, $form, $entry, $url_encode, $esc_html, $nl2br, $format)
 		{
 			$custom_merge_tag = '{download_all_files_zip}';
 			if (strpos($text, $custom_merge_tag) === false) {
