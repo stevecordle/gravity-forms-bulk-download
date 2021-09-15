@@ -49,6 +49,10 @@ No settings necessary, it will create a zip file automatically when multiple fil
 
 == Changelog ==
 
+= 1.1.1 =
+* Prevent fatal error in newer PHP ("non-static method GFBulkDownload::__construct() cannot be called statically".)
+* Other minor adjustments.
+
 = 1.1 =
 * Updated to work with current Gravity Forms versions.
 * Made sure all intended functionality is working properly (submission email notification link, merge tags, output in entry listings & single entry details, bundling of uploaded files, etc.)
