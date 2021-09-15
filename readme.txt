@@ -3,7 +3,7 @@ Contributors: stevecordle, kzeni
 Tags: gravity forms, bulk download
 Requires at least: 3.8
 Tested up to: 5.2.2
-Stable tag: 1.1
+Stable tag: 1.1.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -48,6 +48,9 @@ No settings necessary, it will create a zip file automatically when multiple fil
 3. This shows the Notifications page where a new merge tag was added that can be used to display the link of the zip file {download_all_files_zip}
 
 == Changelog ==
+
+= 1.1.2 =
+* 1.1.1 Missed another function needing to be set as static to avoid PHP issues.
 
 = 1.1.1 =
 * Prevent fatal error in newer PHP ("non-static method GFBulkDownload::__construct() cannot be called statically".)
