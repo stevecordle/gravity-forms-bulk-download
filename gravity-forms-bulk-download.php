@@ -43,11 +43,11 @@ if (!class_exists('GFBulkDownload')) {
 			return $notification;
 		}
 
-		public function addStyles()
+		public static function addStyles()
 		{
 		}
 
-		public function addScripts()
+		public static function addScripts()
 		{
 		}
 
@@ -71,7 +71,7 @@ if (!class_exists('GFBulkDownload')) {
 			}
 		}
 
-		public function preSubmissionFilter($form)
+		public static function preSubmissionFilter($form)
 		{
 			//Get upload path for form
 			$form_upload_dir = GFFormsModel::get_upload_path($form['id']);
@@ -105,7 +105,7 @@ if (!class_exists('GFBulkDownload')) {
 			return $form;
 		}
 
-		public function afterSubmission($entry, $form)
+		public static function afterSubmission($entry, $form)
 		{
 			//update the Entry with a zip_file meta field with a link to the zip file that was created.
 			if (isset($form['zip'])) {
@@ -113,7 +113,7 @@ if (!class_exists('GFBulkDownload')) {
 			}
 		}
 
-		public function delete_entry_file_zip($entry_id)
+		public static function delete_entry_file_zip($entry_id)
 		{
 			//getting entry object
 			$zip = gform_get_meta($entry_id, 'zip_path');
@@ -148,7 +148,7 @@ if (!class_exists('GFBulkDownload')) {
 			return $merge_tags;
 		}
 
-		function replace_download_link($text, $form, $entry, $url_encode, $esc_html, $nl2br, $format)
+		public static function replace_download_link($text, $form, $entry, $url_encode, $esc_html, $nl2br, $format)
 		{
 			$custom_merge_tag = '{download_all_files_zip}';
 			if (strpos($text, $custom_merge_tag) === false) {
